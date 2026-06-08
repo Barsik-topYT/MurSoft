@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="MurSoftware — простые и полезные open-source утилиты для Windows. Бесплатно, без рекламы.">
+    <title>MurSoftware — простые утилиты для Windows</title>
+    <script>
+        (function() {
+            const stored = localStorage.getItem('mursoft-theme');
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const dark = stored === 'dark' || (!stored && prefersDark);
+            document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+        })();
+    </script>
+    <style>
+        
+        :root {
+            --bg-body: #f8fafc;
+            --bg-header: rgba(255, 255, 255, 0.95);
+            --bg-header-scroll: rgba(255, 255, 255, 0.98);
+            --header-border: rgba(0, 0, 0, 0.05);
+            --text-primary: #334155;
+            --text-heading: #0f172a;
+            --text-muted: #64748b;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-border: rgba(255, 255, 255, 0.3);
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            --card-shadow-hover: 0 20px 35px rgba(0, 0, 0, 0.12);
+            --tag-bg: rgba(241, 245, 249, 0.8);
+            --tag-color: #475569;
+            --footer-bg: #1e293b;
+            --footer-heading: #f1f5f9;
+            --footer-link: #94a3b8;
+            --footer-bottom-border: #334155;
+            --bar-color: #333;
+            --nav-mobile-bg: #ffffff;
+            --hero-gradient-start: #2563eb;
+            --hero-gradient-end: #7c3aed;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #0f172a;
+            --bg-header: rgba(15, 23, 42, 0.95);
+            --bg-header-scroll: rgba(15, 23, 42, 0.98);
+            --header-border: rgba(255, 255, 255, 0.05);
+            --text-primary: #cbd5e1;
+            --text-heading: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #60a5fa;
+            --accent-hover: #3b82f6;
+            --card-bg: rgba(30, 41, 59, 0.85);
+            --card-border: rgba(51, 65, 85, 0.5);
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+            --card-shadow-hover: 0 20px 35px rgba(0, 0, 0, 0.35);
+            --tag-bg: rgba(51, 65, 85, 0.8);
+            --tag-color: #cbd5e1;
+            --footer-bg: #020617;
+            --nav-mobile-bg: #1e293b;
+            --bar-color: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.5;
+            color: var(--text-primary);
+            background-color: var(--bg-body);
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            background: var(--bg-header);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--header-border);
+            transition: all 0.3s ease;
+        }
+
+        .header.header-scrolled {
+            background: var(--bg-header-scroll);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 64px;
+            padding: 0 20px;
+        }
+
+        .logo-link {
+            font-size: 1.5rem;
+            font-weight: 800;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--accent), #10b981);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: transform 0.3s ease;
+        }
+
+        .logo-link:hover {
+            transform: scale(1.02);
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover::after {
+            width: 70%;
+        }
+
+        .nav-link:hover {
+            color: var(--accent);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .theme-toggle {
+            background: var(--tag-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(10deg);
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .theme-toggle .fa-sun { display: none; }
+        [data-theme="dark"] .theme-toggle .fa-moon { display: none; }
+        [data-theme="dark"] .theme-toggle .fa-sun { display: inline; }
+
+        .lang-switch {
+            display: flex;
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            overflow: hidden;
+            background: var(--tag-bg);
+        }
+
+        .lang-btn {
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-weight: 600;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .lang-btn:hover { color: var(--accent); }
+        .lang-btn.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: var(--bar-color);
+            border-radius: 2px;
+            transition: 0.3s ease;
+        }
+
+        .hero {
+            padding: 120px 0 80px;
+            background: linear-gradient(135deg, var(--hero-gradient-start) 0%, var(--hero-gradient-end) 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #particlesCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .hero-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            animation: fadeInUp 0.6s ease 0.1s both;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.6s ease 0.2s both;
+        }
+
+        .hero-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .code-window {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .code-header {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px 16px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .code-title {
+            margin-left: auto;
+            font-size: 0.75rem;
+            font-family: monospace;
+            opacity: 0.6;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .dot.red { background: #ff5f56; }
+        .dot.yellow { background: #ffbd2e; }
+        .dot.green { background: #27c93f; }
+
+        .code-body {
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #e2e8f0;
+        }
+
+        .code-line {
+            margin: 4px 0;
+            opacity: 0;
+            animation: codeReveal 0.4s ease forwards;
+        }
+        .code-line:nth-child(1) { animation-delay: 0.1s; }
+        .code-line:nth-child(2) { animation-delay: 0.2s; }
+        .code-line:nth-child(3) { animation-delay: 0.3s; }
+        .code-line:nth-child(4) { animation-delay: 0.4s; }
+        .code-line:nth-child(5) { animation-delay: 0.5s; }
+        .code-line:nth-child(6) { animation-delay: 0.6s; }
+
+        .cursor-line {
+            width: 8px;
+            height: 14px;
+            background: white;
+            margin-top: 8px;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        @keyframes codeReveal {
+            from { opacity: 0; transform: translateX(-15px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .code-line .keyword { color: #c792ea; }
+        .code-line .class-name { color: #ffcb6b; }
+        .code-line .function { color: #82aaff; }
+        .code-line .string { color: #c3e88d; }
+        .indent { margin-left: 20px; }
+        .indent2 { margin-left: 40px; }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 12px 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.25s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 0.95rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.5s, height 0.5s;
+        }
+
+        .btn:hover::before {
+            width: 200px;
+            height: 200px;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--accent);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.3); transform: translateY(-2px); }
+
+        .btn-release {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            justify-content: center;
+        }
+        .btn-release:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3); }
+
+        .btn-source {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            color: var(--text-primary);
+            border: 1px solid var(--card-border);
+            justify-content: center;
+        }
+        .btn-source:hover { background: rgba(255, 255, 255, 0.2); transform: translateY(-2px); }
+
+        .btn-github-large, .btn-telegram-large {
+            background: #24292f;
+            color: white;
+        }
+        .btn-telegram-large { background: #0088cc; }
+        .btn-github-large:hover, .btn-telegram-large:hover { transform: translateY(-2px); }
+
+        .programs {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            color: var(--text-heading);
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), #10b981);
+            border-radius: 3px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            font-size: 1rem;
+        }
+
+        .programs-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 1.5rem;
+            position: relative;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .program-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 1.8rem;
+            width: 280px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--card-border);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            animation: cardAppear 0.4s ease backwards;
+        }
+
+        .program-card:nth-child(1) { animation-delay: 0.05s; }
+        .program-card:nth-child(2) { animation-delay: 0.1s; }
+        .program-card:nth-child(3) { animation-delay: 0.15s; }
+        .program-card:nth-child(4) { animation-delay: 0.2s; }
+
+        @keyframes cardAppear {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @media (min-width: 901px) {
+            .program-card:nth-child(1) { transform: rotate(-4deg) translateY(8px) translateX(6px); z-index: 1; }
+            .program-card:nth-child(2) { transform: rotate(-1deg) translateY(2px) translateX(3px); z-index: 2; }
+            .program-card:nth-child(3) { transform: rotate(0deg) translateY(0px) translateX(0px); z-index: 4; }
+            .program-card:nth-child(4) { transform: rotate(3deg) translateY(5px) translateX(-5px); z-index: 3; }
+
+            .programs-grid:hover .program-card {
+                transform: rotate(0deg) translateY(0) translateX(0);
+            }
+
+            .program-card:hover {
+                transform: scale(1.04) translateY(-10px) translateX(0) !important;
+                z-index: 10;
+                box-shadow: var(--card-shadow-hover);
+            }
+
+            .programs-grid:hover .program-card:not(:hover) {
+                opacity: 0.7;
+            }
+        }
+
+        .program-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), #10b981);
+            transition: left 0.4s ease;
+        }
+
+        .program-card:hover::after {
+            left: 0;
+        }
+
+        .program-icon {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, var(--accent), #10b981);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .program-card:hover .program-icon {
+            transform: scale(1.05);
+        }
+
+        .program-icon i { font-size: 1.6rem; color: white; }
+
+        .program-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-heading);
+        }
+
+        .program-description {
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            min-height: 60px;
+        }
+
+        .program-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .feature-tag {
+            background: var(--tag-bg);
+            backdrop-filter: blur(5px);
+            color: var(--tag-color);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .feature-tag:hover {
+            background: var(--accent);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .program-download {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+        .program-download .btn { width: 100%; padding: 10px 16px; font-size: 0.85rem; }
+
+        .about {
+            background: var(--bg-body);
+            padding: 80px 0;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-description {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+
+        .about-features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 8px 12px;
+            background: var(--card-bg);
+            backdrop-filter: blur(5px);
+            border-radius: 12px;
+            transition: all 0.25s;
+            font-size: 0.9rem;
+        }
+
+        .feature-item:hover {
+            transform: translateX(5px);
+            background: var(--accent);
+            color: white;
+        }
+        .feature-item:hover i { color: white; }
+        .feature-item i { color: #10b981; font-size: 1.1rem; }
+
+        .about-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .stat-item {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem 1rem;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid var(--card-border);
+            transition: all 0.25s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), #10b981);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        .stat-label { color: var(--text-muted); font-size: 0.8rem; font-weight: 500; }
+
+        .about-buttons { display: flex; flex-wrap: wrap; gap: 1rem; }
+
+        .contact {
+            padding: 80px 0;
+        }
+
+        .contact-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            padding: 1.2rem 1.5rem;
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+            transition: all 0.25s ease;
+        }
+
+        .contact-item:hover {
+            transform: translateX(8px);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .contact-item i {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent), #10b981);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+            transition: all 0.25s;
+        }
+
+        .contact-item:hover i {
+            transform: scale(1.05);
+        }
+
+        .contact-item h4 { margin-bottom: 3px; color: var(--text-heading); font-size: 1rem; }
+        .contact-item a { color: var(--accent); text-decoration: none; font-size: 0.9rem; }
+
+        .footer {
+            background: var(--footer-bg);
+            color: white;
+            padding: 2.5rem 0 1rem;
+            margin-top: 2rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3, .footer-section h4 { margin-bottom: 1rem; color: white; font-size: 0.95rem; }
+        .footer-section ul { list-style: none; }
+        .footer-section ul li { margin-bottom: 0.5rem; }
+        .footer-section a { color: var(--footer-link); text-decoration: none; transition: all 0.2s; display: inline-block; font-size: 0.85rem; }
+        .footer-section a:hover { color: var(--accent); transform: translateX(3px); }
+
+        .footer-bottom {
+            border-top: 1px solid var(--footer-bottom-border);
+            padding-top: 1rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--footer-link);
+        }
+
+        .footer-disclaimer { font-size: 0.7rem; margin-top: 0.5rem; }
+
+        .scroll-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--accent), #10b981);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .scroll-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-to-top:hover {
+            transform: translateY(-3px);
+        }
+
+        /* ==================== */
+        /* ЗЕЛЁНЫЙ БЕЙДЖ "НОВОЕ" — ИСПРАВЛЕННЫЙ */
+        /* ==================== */
+        
+        .feature-tag-new {
+            background: #10b981 !important;
+            color: white !important;
+            padding: 4px 12px !important;
+            border-radius: 20px !important;
+            font-size: 0.7rem !important;
+            font-weight: 700 !important;
+            display: inline-block !important;
+            margin-left: 10px !important;
+            vertical-align: middle !important;
+            animation: pulse 2s ease-in-out infinite !important;
+            border: none !important;
+            text-shadow: none !important;
+        }
+
+        @keyframes pulse {
+            0%, 100% { 
+                opacity: 1; 
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+            }
+            50% { 
+                opacity: 0.9; 
+                transform: scale(1.03);
+                box-shadow: 0 0 0 5px rgba(16, 185, 129, 0);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .programs-grid { flex-direction: column; align-items: center; }
+            .program-card { width: 100%; max-width: 360px; transform: none !important; }
+            .programs-grid:hover .program-card { transform: none !important; }
+            .program-card:hover { transform: translateY(-5px) scale(1.01) !important; }
+            .programs-grid:hover .program-card:not(:hover) { opacity: 1; }
+            .hero-container { grid-template-columns: 1fr; text-align: center; gap: 2rem; }
+            .hero-title { font-size: 2rem; }
+            .hero { padding: 100px 0 60px; }
+            .hero-buttons { justify-content: center; }
+            .section-title { font-size: 2rem; }
+            .about-content { grid-template-columns: 1fr; gap: 2rem; text-align: center; }
+            .about-features { grid-template-columns: 1fr; text-align: left; max-width: 300px; margin: 2rem auto; }
+            .about-stats { grid-template-columns: 1fr; gap: 1rem; max-width: 280px; margin: 0 auto; }
+            .about-buttons { justify-content: center; }
+            .footer-content { grid-template-columns: 1fr; text-align: center; }
+            .contact-item { justify-content: center; text-align: left; }
+            .nav-menu {
+                position: fixed;
+                left: -100%;
+                top: 64px;
+                flex-direction: column;
+                background: var(--nav-mobile-bg);
+                width: 100%;
+                text-align: center;
+                transition: 0.3s;
+                padding: 2rem;
+                gap: 1.5rem;
+                border-bottom: 1px solid var(--header-border);
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            }
+            .nav-menu.active { left: 0; }
+            .hamburger { display: flex; }
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 0 16px; }
+            .hero-title { font-size: 1.6rem; }
+            .hero-subtitle { font-size: 0.95rem; }
+            .btn { padding: 10px 18px; font-size: 0.85rem; }
+            .program-card { padding: 1.2rem; }
+            .code-body { font-size: 0.6rem; padding: 12px; }
+            .program-icon { width: 45px; height: 45px; }
+            .program-icon i { font-size: 1.3rem; }
+            .program-title { font-size: 1.2rem; }
+            .feature-tag-new { padding: 2px 8px !important; font-size: 0.6rem !important; margin-left: 6px !important; }
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-container">
+                <div class="logo">
+                    <a href="#home" class="logo-link">MurSoftware</a>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="#home" class="nav-link" data-i18n="nav.home">Главная</a></li>
+                    <li><a href="#programs" class="nav-link" data-i18n="nav.programs">Программы</a></li>
+                    <li><a href="launcher/Index.html" class="nav-link" data-i18n="nav.murflame">MurFlame Launcher</a></li>
+                    <li><a href="#about" class="nav-link" data-i18n="nav.about">Обо мне</a></li>
+                    <li><a href="#contact" class="nav-link" data-i18n="nav.contact">Контакты</a></li>
+                    <li>
+                        <div class="lang-switch" role="group">
+                            <button type="button" class="lang-btn active" data-lang="ru">RU</button>
+                            <button type="button" class="lang-btn" data-lang="en">EN</button>
+                        </div>
+                    </li>
+                    <li>
+                        <button type="button" class="theme-toggle" aria-label="Сменить тему">
+                            <i class="fas fa-moon"></i>
+                            <i class="fas fa-sun"></i>
+                        </button>
+                    </li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <canvas id="particlesCanvas"></canvas>
+            <div class="container hero-container">
+                <div class="hero-content">
+                    <h1 class="hero-title" data-i18n="hero.title">Простые утилиты для Windows</h1>
+                    <p class="hero-subtitle" data-i18n="hero.subtitle">
+                        Бесплатно, с открытым кодом, без рекламы и слежки. Утилиты для настройки и обслуживания вашего ПК.
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="#programs" class="btn btn-primary" data-i18n="hero.btnProjects">Смотреть Программы</a>
+                        <a href="https://github.com/Barsik-topYT" class="btn btn-secondary" target="_blank">
+                            <i class="fab fa-github"></i>
+                            <span data-i18n="hero.btnGithub">GitHub</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="hero-animation">
+                    <div class="code-window">
+                        <div class="code-header">
+                            <span class="dot red"></span>
+                            <span class="dot yellow"></span>
+                            <span class="dot green"></span>
+                            <span class="code-title">terminal.exe</span>
+                        </div>
+                        <div class="code-body">
+                            <div class="code-line"><span class="keyword">using</span> System;</div>
+                            <div class="code-line"><span class="keyword">class</span> <span class="class-name">Program</span> {</div>
+                            <div class="code-line indent">  <span class="keyword">static void</span> <span class="function">Main</span>() {</div>
+                            <div class="code-line indent2">    Console.<span class="function">WriteLine</span>(<span class="string">"Hello, World!"</span>);</div>
+                            <div class="code-line indent">  }</div>
+                            <div class="code-line">}</div>
+                            <div class="cursor-line"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="programs" class="programs">
+            <div class="container">
+                <h2 class="section-title" data-i18n="programs.title">Программы</h2>
+
+                <div class="programs-grid">
+                    <!-- MurKMS -->
+                    <div class="program-card" data-tilt>
+                        <div class="program-icon"><i class="fas fa-cogs"></i></div>
+                        <h3 class="program-title">MurKey</h3>
+                        <p class="program-description" data-i18n="murkms.desc">Настройка корпоративного лицензирования Windows одной кнопкой.</p>
+                        <div class="program-features">
+                            <span class="feature-tag" data-i18n="murkms.tag1">Volume Licensing</span>
+                            <span class="feature-tag" data-i18n="murkms.tag2">Open Source</span>
+                        </div>
+                        <div class="program-download">
+                            <a href="https://github.com/Barsik-topYT/MurKey/releases/download/MurKey2.2/MurKey.2.2.exe" class="btn btn-release" target="_blank"><i class="fas fa-download"></i> <span data-i18n="common.download">Скачать</span></a>
+                            <a href="https://github.com/Barsik-topYT/MurKey" class="btn btn-source" target="_blank"><i class="fab fa-github"></i> <span data-i18n="common.source">Исходный код</span></a>
+                        </div>
+                    </div>
+
+
+
+                    <!-- MurTools -->
+                    <div class="program-card" data-tilt>
+                        <div class="program-icon"><i class="fas fa-toolbox"></i></div>
+                        <h3 class="program-title">MurTools</h3>
+                        <p class="program-description" data-i18n="murtools.desc">Набор утилит для повседневных задач: очистка, разблокировка файлов и другое.</p>
+                        <div class="program-features">
+                            <span class="feature-tag" data-i18n="murtools.tag1">Simple Unlocker</span>
+                            <span class="feature-tag" data-i18n="murtools.tag2">MurBlocker</span>
+                            <span class="feature-tag" data-i18n="murtools.tag3">Open Source</span>
+                        </div>
+                        <div class="program-download">
+                            <a href="https://github.com/Barsik-topYT/MurTools/releases/download/MurTools3.0/MurTools.exe" class="btn btn-release" target="_blank"><i class="fas fa-download"></i> <span data-i18n="common.download">Скачать</span></a>
+                            <a href="https://github.com/Barsik-topYT/MurTools" class="btn btn-source" target="_blank"><i class="fab fa-github"></i> <span data-i18n="common.source">Исходный код</span></a>
+                        </div>
+                    </div>
+
+                    <!-- MurBlocker -->
+                    <div class="program-card" data-tilt>
+                        <div class="program-icon"><i class="fas fa-shield-alt"></i></div>
+                        <h3 class="program-title">MurBlocker</h3>
+                        <p class="program-description" data-i18n="murblocker.desc">Блокировка сайтов и приложений через файл hosts. Легко и без фоновых процессов.</p>
+                        <div class="program-features">
+                            <span class="feature-tag" data-i18n="murblocker.tag1">Без фоновых служб</span>
+                            <span class="feature-tag" data-i18n="murblocker.tag2">hosts</span>
+                            <span class="feature-tag" data-i18n="murblocker.tag3">Open Source</span>
+                        </div>
+                        <div class="program-download">
+                            <a href="https://github.com/Barsik-topYT/MurBlocker/releases/download/MurBlocker1.5/MurBlocker.1.5.exe" class="btn btn-release" target="_blank"><i class="fas fa-download"></i> <span data-i18n="common.download">Скачать</span></a>
+                            <a href="https://github.com/Barsik-topYT/MurBlocker" class="btn btn-source" target="_blank"><i class="fab fa-github"></i> <span data-i18n="common.source">Исходный код</span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="about">
+            <div class="container">
+                <div class="about-content">
+                    <div class="about-text">
+                        <h2 class="section-title" data-i18n="about.title">Обо мне</h2>
+                        <p class="about-description" data-i18n="about.desc">
+                            Привет! Я независимый разработчик. Я делаю простые, полезные и безопасные программы для Windows.
+                            Весь код открыт — вы можете проверить его сами на GitHub.
+                        </p>
+                        <div class="about-features">
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> <span data-i18n="about.f1">Полностью Open Source</span></div>
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> <span data-i18n="about.f2">Легкие и быстрые</span></div>
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> <span data-i18n="about.f3">Без скрытой логики</span></div>
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> <span data-i18n="about.f4">Бесплатно навсегда</span></div>
+                        </div>
+                        <div class="about-buttons">
+                            <a href="https://github.com/Barsik-topYT" class="btn btn-github-large" target="_blank"><i class="fab fa-github"></i> <span data-i18n="about.githubBtn">GitHub профиль</span></a>
+                            <a href="https://t.me/MurSoftware" class="btn btn-telegram-large" target="_blank"><i class="fab fa-telegram-plane"></i> <span data-i18n="about.telegramBtn">Telegram канал</span></a>
+                        </div>
+                    </div>
+                    <div class="about-stats">
+                        <div class="stat-item" data-count="4"><div class="stat-number">0</div><div class="stat-label" data-i18n="stats.projects">Проекта</div></div>
+                        <div class="stat-item" data-count="100"><div class="stat-number">0%</div><div class="stat-label" data-i18n="stats.opensource">Open Source</div></div>
+                        <div class="stat-item"><div class="stat-number">GitHub</div><div class="stat-label" data-i18n="stats.releases">Все релизы там</div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="contact">
+            <div class="container">
+                <h2 class="section-title" data-i18n="contact.title">Контакты</h2>
+                <p class="section-subtitle" data-i18n="contact.subtitle">Вопросы, баги, предложения — напишите!</p>
+                <div class="contact-content">
+                    <div class="contact-item">
+                        <i class="fab fa-telegram-plane"></i>
+                        <div><h4 data-i18n="contact.telegram">Telegram</h4><p><a href="https://t.me/MurSoftware" target="_blank">@MurSoftware</a></p></div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fab fa-github"></i>
+                        <div><h4 data-i18n="contact.github">GitHub</h4><p><a href="https://github.com/Barsik-topYT" target="_blank">Barsik-topYT</a></p></div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div><h4 data-i18n="contact.email">Email</h4><p>murflamecooperation@gmail.com</p></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>MurSoftware</h3>
+                    <p data-i18n="footer.tagline">Простые open-source утилиты для Windows</p>
+                </div>
+                <div class="footer-section">
+                    <h4 data-i18n="footer.projects">Программы</h4>
+                    <ul>
+                        <li><a href="https://github.com/Barsik-topYT/MurKMS" target="_blank">MurKMS</a></li>
+                        <li><a href="https://github.com/Barsik-topYT/MurFlameLauncher" target="_blank">MurFlame Launcher</a></li>
+                        <li><a href="https://github.com/Barsik-topYT/MurTools" target="_blank">MurTools</a></li>
+                        <li><a href="https://github.com/Barsik-topYT/MurBlocker" target="_blank">MurBlocker</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 data-i18n="footer.site">На сайте</h4>
+                    <ul>
+                        <li><a href="#about" data-i18n="footer.about">Обо мне</a></li>
+                        <li><a href="#programs" data-i18n="footer.programs">Программы</a></li>
+                        <li><a href="#contact" data-i18n="footer.contact">Контакты</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024–2026 MurSoftware</p>
+                <p class="footer-disclaimer" data-i18n="footer.disclaimer">Все утилиты предоставляются «как есть». Созданы в образовательных целях.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ==================== ПЕРЕВОДЫ ====================
+        const translations = {
+            ru: {
+                'nav.home': 'Главная',
+                'nav.programs': 'Программы',
+                'nav.about': 'Обо мне',
+                'nav.contact': 'Контакты',
+                'hero.title': 'Простые утилиты для Windows',
+                'hero.subtitle': 'Бесплатно, с открытым кодом, без рекламы и слежки. Утилиты для настройки и обслуживания вашего ПК.',
+                'hero.btnProjects': 'Смотреть Программы',
+                'hero.btnGithub': 'GitHub',
+                'programs.title': 'Программы',
+                'programs.subtitle': 'Скачивайте только с GitHub Releases — это безопасно.',
+                'murkms.desc': 'Настройка лицензии Windows за один клик. Очень просто.',
+                'murkms.tag1': 'Volume Licensing',
+                'murkms.tag2': 'Open Source',
+                'murflame.desc': 'Простой и удобный лаунчер для Minecraft. Всё в одном месте.',
+                'murflame.tag1': 'Игровой лаунчер',
+                'murflame.tag2': 'Быстрый запуск',
+                'murflame.tag3': 'Open Source',
+                'murflame.tag4': 'Новое',
+                'murtools.desc': 'Сразу несколько полезных штук: MurBlocker, разблокировка файлов и MurKey.',
+                'murtools.tag1': 'Simple Unlocker',
+                'murtools.tag2': 'MurBlocker',
+                'murtools.tag3': 'Open Source',
+                'murblocker.desc': 'Закрывает доступ к сайтам и программам к которым попросите.',
+                'murblocker.tag1': 'Без фоновых служб',
+                'murblocker.tag2': 'hosts',
+                'murblocker.tag3': 'Open Source',
+                'common.download': 'Скачать',
+                'common.source': 'Исходный код',
+                'about.title': 'Обо мне',
+                'about.desc': 'Привет! Я независимый разработчик. Я делаю простые, полезные и безопасные программы для Windows. Весь код открыт — вы можете проверить его сами на GitHub.',
+                'about.f1': 'Полностью Open Source',
+                'about.f2': 'Легкие и быстрые',
+                'about.f3': 'Без скрытой логики',
+                'about.f4': 'Бесплатно навсегда',
+                'about.githubBtn': 'GitHub профиль',
+                'about.telegramBtn': 'Telegram канал',
+                'stats.projects': 'Проекта',
+                'stats.opensource': 'Open Source',
+                'stats.releases': 'Все релизы там',
+                'contact.title': 'Контакты',
+                'contact.subtitle': 'Вопросы, баги, предложения — напишите!',
+                'contact.telegram': 'Telegram',
+                'contact.github': 'GitHub',
+                'contact.email': 'Email',
+                'footer.tagline': 'Простые open-source утилиты для Windows',
+                'footer.projects': 'Программы',
+                'footer.site': 'На сайте',
+                'footer.about': 'Обо мне',
+                'footer.programs': 'Программы',
+                'footer.contact': 'Контакты',
+                'footer.disclaimer': 'Все утилиты предоставляются «как есть». Созданы в образовательных целях.'
+            },
+            en: {
+                'nav.home': 'Home',
+                'nav.programs': 'Projects',
+                'nav.about': 'About',
+                'nav.contact': 'Contact',
+                'hero.title': 'Simple Windows Utilities',
+                'hero.subtitle': 'Free, open source, no ads, no tracking. Utilities for tuning and maintaining your PC.',
+                'hero.btnProjects': 'View Projects',
+                'hero.btnGithub': 'GitHub',
+                'programs.title': 'Projects',
+                'programs.subtitle': 'Download only from GitHub Releases — it\'s safe.',
+                'murkms.desc': 'Configure Windows volume licensing with one click.',
+                'murkms.tag1': 'Volume Licensing',
+                'murkms.tag2': 'Open Source',
+				'murflame.tag4': 'New',
+                'murflame.desc': 'A simple and convenient launcher for Minecraft. Everything in one place.',
+                'murflame.tag1': 'Game Launcher',
+                'murflame.tag2': 'Fast Launch',
+                'murflame.tag3': 'Open Source',
+                'murflame.tag4': 'New',
+                'murtools.desc': 'A set of utilities for everyday tasks: cleaning, file unlocking, and more.',
+                'murtools.tag1': 'Simple Unlocker',
+                'murtools.tag2': 'MurBlocker',
+                'murtools.tag3': 'Open Source',
+                'murblocker.desc': 'Block websites and apps via the hosts file. Easy, with no background processes.',
+                'murblocker.tag1': 'No background services',
+                'murblocker.tag2': 'hosts',
+                'murblocker.tag3': 'Open Source',
+                'common.download': 'Download',
+                'common.source': 'Source code',
+                'about.title': 'About me',
+                'about.desc': 'Hi! I\'m an indie developer. I make simple, useful, and safe programs for Windows. All code is open — you can check it yourself on GitHub.',
+                'about.f1': 'Fully Open Source',
+                'about.f2': 'Light & Fast',
+                'about.f3': 'No hidden logic',
+                'about.f4': 'Forever Free',
+                'about.githubBtn': 'GitHub profile',
+                'about.telegramBtn': 'Telegram channel',
+                'stats.projects': 'Projects',
+                'stats.opensource': 'Open Source',
+                'stats.releases': 'All releases there',
+                'contact.title': 'Contact',
+                'contact.subtitle': 'Questions, bugs, suggestions — write us!',
+                'contact.telegram': 'Telegram',
+                'contact.github': 'GitHub',
+                'contact.email': 'Email',
+                'footer.tagline': 'Simple open-source Windows utilities',
+                'footer.projects': 'Projects',
+                'footer.site': 'On site',
+                'footer.about': 'About',
+                'footer.programs': 'Programs',
+                'footer.contact': 'Contact',
+                'footer.disclaimer': 'All utilities are provided "as is". Created for educational purposes.'
+            }
+        };
+
+        let currentLang = localStorage.getItem('mursoft-lang') || 'ru';
+
+        function applyTranslations() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[currentLang][key]) {
+                    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                        el.placeholder = translations[currentLang][key];
+                    } else {
+                        el.textContent = translations[currentLang][key];
+                    }
+                }
+            });
+        }
+
+        function setLang(lang) {
+            currentLang = lang;
+            localStorage.setItem('mursoft-lang', lang);
+            applyTranslations();
+            document.documentElement.lang = lang === 'ru' ? 'ru' : 'en';
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+            });
+        }
+
+        // ==================== ОСТАЛЬНЫЕ СКРИПТЫ ====================
+        
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
+
+        if (hamburger && navMenu) {
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
+            document.querySelectorAll('.nav-link').forEach(n => n.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            }));
+        }
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        const themeToggle = document.querySelector('.theme-toggle');
+        const THEME_KEY = 'mursoft-theme';
+
+        function getTheme() { return document.documentElement.getAttribute('data-theme') || 'light'; }
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            try { localStorage.setItem(THEME_KEY, theme); } catch (e) {}
+        }
+        function toggleTheme() { setTheme(getTheme() === 'dark' ? 'light' : 'dark'); }
+
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                toggleTheme();
+                hamburger?.classList.remove('active');
+                navMenu?.classList.remove('active');
+            });
+        }
+
+        const langBtns = document.querySelectorAll('.lang-btn');
+        langBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                setLang(btn.getAttribute('data-lang'));
+                hamburger?.classList.remove('active');
+                navMenu?.classList.remove('active');
+            });
+        });
+
+        function updateHeaderScroll() {
+            document.querySelector('.header')?.classList.toggle('header-scrolled', window.scrollY > 50);
+        }
+        window.addEventListener('scroll', updateHeaderScroll);
+        updateHeaderScroll();
+
+        const canvas = document.getElementById('particlesCanvas');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            
+            function resizeCanvas() {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+            }
+            
+            function createParticles() {
+                particles = [];
+                for (let i = 0; i < 40; i++) {
+                    particles.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        radius: Math.random() * 2 + 1,
+                        speedX: (Math.random() - 0.5) * 0.4,
+                        speedY: (Math.random() - 0.5) * 0.4,
+                        opacity: Math.random() * 0.4 + 0.2
+                    });
+                }
+            }
+            
+            function animateParticles() {
+                if (!ctx) return;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.x += p.speedX;
+                    p.y += p.speedY;
+                    if (p.x < 0) p.x = canvas.width;
+                    if (p.x > canvas.width) p.x = 0;
+                    if (p.y < 0) p.y = canvas.height;
+                    if (p.y > canvas.height) p.y = 0;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity})`;
+                    ctx.fill();
+                });
+                requestAnimationFrame(animateParticles);
+            }
+            
+            window.addEventListener('resize', () => { resizeCanvas(); createParticles(); });
+            resizeCanvas();
+            createParticles();
+            animateParticles();
+        }
+
+        document.querySelectorAll('[data-tilt]').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = (y - centerY) / 25;
+                const rotateY = (centerX - x) / 25;
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-3px)`;
+            });
+            card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+        });
+
+        const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -30px 0px' };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    if (entry.target.classList.contains('stat-item') && entry.target.dataset.count) {
+                        const counter = entry.target.querySelector('.stat-number');
+                        const targetCount = parseInt(entry.target.dataset.count);
+                        let current = 0;
+                        const increment = targetCount / 40;
+                        const updateCounter = () => {
+                            current += increment;
+                            if (current < targetCount) {
+                                counter.textContent = Math.floor(current) + (targetCount === 100 ? '%' : '');
+                                requestAnimationFrame(updateCounter);
+                            } else {
+                                counter.textContent = targetCount + (targetCount === 100 ? '%' : '');
+                            }
+                        };
+                        updateCounter();
+                    }
+                }
+            });
+        }, observerOptions);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setLang(currentLang);
+            document.querySelectorAll('.program-card, .stat-item, .contact-item, .about-text').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                observer.observe(el);
+            });
+        });
+
+        const scrollBtn = document.createElement('button');
+        scrollBtn.innerHTML = '<i class="fas fa-arrow-up"></i>';
+        scrollBtn.className = 'scroll-to-top';
+        document.body.appendChild(scrollBtn);
+        window.addEventListener('scroll', () => scrollBtn.classList.toggle('visible', window.pageYOffset > 300));
+        scrollBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    </script>
+</body>
+</html>

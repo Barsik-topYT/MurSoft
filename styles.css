@@ -1,0 +1,350 @@
+/* ==================== */
+/* НОВЫЕ АНИМАЦИИ — ИСПРАВЛЕННЫЕ */
+/* ==================== */
+
+/* 1. Анимированные градиентные границы у карточек */
+.program-card {
+    position: relative;
+    background-clip: padding-box;
+}
+
+.program-card::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, 
+        #ff0000, #ff7300, #fffb00, #48ff00, 
+        #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+    background-size: 400%;
+    border-radius: 26px;
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 0.5s ease;
+    animation: rainbowBorder 3s linear infinite;
+    pointer-events: none;
+}
+
+.program-card:hover::before {
+    opacity: 1;
+}
+
+@keyframes rainbowBorder {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* 2. Падающие звёзды */
+.shooting-star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.8);
+    animation: shootStar 3s linear infinite;
+    pointer-events: none;
+    z-index: 999;
+}
+
+@keyframes shootStar {
+    0% {
+        transform: translateX(0) translateY(0);
+        opacity: 1;
+    }
+    70% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-300px) translateY(300px);
+        opacity: 0;
+    }
+}
+
+/* 3. Трясущиеся кнопки при наведении */
+.btn {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn:hover {
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    75% { transform: translateX(3px); }
+}
+
+/* 4. Вращающиеся иконки */
+.program-icon i {
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.program-card:hover .program-icon i {
+    animation: spin 0.6s ease-out;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 5. Пульсирующий фон героя */
+.hero {
+    animation: bgPulse 4s ease-in-out infinite;
+    background-size: 100% 100%;
+}
+
+@keyframes bgPulse {
+    0%, 100% { 
+        background-size: 100% 100%;
+    }
+    50% { 
+        background-size: 105% 105%;
+    }
+}
+
+/* 6. Скользящие тени */
+.program-card {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.program-card:hover {
+    box-shadow: 0 30px 50px rgba(0, 0, 0, 0.3);
+}
+
+/* 7. Анимация появления секций с задержкой */
+section {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: sectionFadeIn 0.8s ease forwards;
+}
+
+section:nth-child(1) { animation-delay: 0.1s; }
+section:nth-child(2) { animation-delay: 0.3s; }
+section:nth-child(3) { animation-delay: 0.5s; }
+section:nth-child(4) { animation-delay: 0.7s; }
+
+@keyframes sectionFadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 8. Эффект набора текста для заголовков (только на ПК) */
+@media (min-width: 769px) {
+    .section-title {
+        overflow: hidden;
+        white-space: nowrap;
+        animation: typing 2s steps(40, end);
+        width: 0;
+    }
+    
+    @keyframes typing {
+        from { width: 0; }
+        to { width: 100%; }
+    }
+}
+
+/* На мобильных отключаем typing анимацию */
+@media (max-width: 768px) {
+    .section-title {
+        white-space: normal;
+        animation: none;
+        width: auto;
+    }
+}
+
+/* 9. Мерцание тегов при наведении */
+.feature-tag {
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-tag::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+}
+
+.feature-tag:hover::before {
+    left: 100%;
+}
+
+/* 10. Эффект "дрожания" статистики */
+.stat-item:hover .stat-number {
+    animation: numberPop 0.3s ease-out;
+    display: inline-block;
+}
+
+@keyframes numberPop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* 11. Анимированная волна под футером */
+.footer {
+    position: relative;
+    overflow: hidden;
+}
+
+.footer::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 20px,
+        rgba(255,255,255,0.05) 20px,
+        rgba(255,255,255,0.05) 40px
+    );
+    animation: waveMove 20s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes waveMove {
+    from { background-position: 0 0; }
+    to { background-position: 100px 0; }
+}
+
+/* 12. Плавное появление карточек в веере (уже есть в основном CSS, добавляем дополнительные эффекты) */
+.program-card {
+    animation: cardAppear 0.5s ease backwards;
+}
+
+.program-card:nth-child(1) { animation-delay: 0.05s; }
+.program-card:nth-child(2) { animation-delay: 0.1s; }
+.program-card:nth-child(3) { animation-delay: 0.15s; }
+.program-card:nth-child(4) { animation-delay: 0.2s; }
+
+@keyframes cardAppear {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* 13. Эффект стекла при наведении на контакты */
+.contact-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.contact-item::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.5s;
+    pointer-events: none;
+}
+
+.contact-item:hover::before {
+    opacity: 1;
+    animation: glassRotate 3s linear infinite;
+}
+
+@keyframes glassRotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* 14. Мигающий курсор для hero текста */
+.hero-subtitle {
+    border-right: 2px solid white;
+    animation: blinkCursor 1s step-end infinite;
+}
+
+@keyframes blinkCursor {
+    0%, 100% { border-color: white; }
+    50% { border-color: transparent; }
+}
+
+/* 15. Эффект парящих иконок в герое */
+.hero-animation {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+/* ==================== */
+/* ЗЕЛЁНЫЙ БЕЙДЖ "НОВОЕ" */
+/* ==================== */
+
+.feature-tag-new {
+    background: #10b981;
+    color: white;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    display: inline-block;
+    margin-left: 10px;
+    vertical-align: middle;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { 
+        opacity: 1; 
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+    }
+    50% { 
+        opacity: 0.9; 
+        transform: scale(1.03);
+        box-shadow: 0 0 0 5px rgba(16, 185, 129, 0);
+    }
+}
+
+/* ==================== */
+/* TELEGRAM ЗЕЛЁНЫЙ СТИЛЬ */
+/* ==================== */
+
+.btn-telegram-header,
+.btn-telegram-hero,
+.btn-telegram-large,
+.btn-telegram-footer {
+    background: #10b981 !important;
+    color: white !important;
+}
+
+.btn-telegram-header:hover,
+.btn-telegram-hero:hover,
+.btn-telegram-large:hover,
+.btn-telegram-footer:hover {
+    background: #059669 !important;
+    transform: translateY(-2px);
+}
+
+/* Иконка Telegram в контактах */
+.contact-item .fa-telegram-plane {
+    background: linear-gradient(135deg, #10b981, #059669) !important;
+}

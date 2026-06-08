@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="MurFlame Launcher — простой и удобный лаунчер для Minecraft">
+    <title>MurFlame Launcher | Современный игровой опыт</title>
+    <script>
+        (function() {
+            const stored = localStorage.getItem('mursoft-theme');
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const dark = stored === 'dark' || (!stored && prefersDark);
+            document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+        })();
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a14;
+            --bg-secondary: #11111f;
+            --bg-card: rgba(20, 25, 45, 0.85);
+            --accent: #ff5e2e;
+            --accent-glow: #ff3c00;
+            --accent-hover: #ff7a4f;
+            --text-primary: #ffffff;
+            --text-secondary: #cbd5e6;
+            --text-muted: #7e8ba3;
+            --border: rgba(255, 107, 53, 0.25);
+            --card-border: rgba(255, 107, 53, 0.2);
+            --glow-sm: 0 0 12px rgba(255, 94, 46, 0.4);
+            --glow: 0 0 30px rgba(255, 94, 46, 0.5);
+            --glow-lg: 0 0 60px rgba(255, 94, 46, 0.3);
+            --transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #eef2f6;
+            --bg-card: rgba(255, 255, 255, 0.92);
+            --accent: #e55c2e;
+            --accent-glow: #cc4a1e;
+            --accent-hover: #ff784e;
+            --text-primary: #0f172a;
+            --text-secondary: #1e293b;
+            --text-muted: #475569;
+            --border: rgba(229, 92, 46, 0.4);
+            --card-border: rgba(229, 92, 46, 0.3);
+            --glow-sm: 0 0 12px rgba(229, 92, 46, 0.25);
+            --glow: 0 0 28px rgba(229, 92, 46, 0.2);
+            --glow-lg: 0 0 45px rgba(229, 92, 46, 0.15);
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            overflow-x: hidden;
+            transition: background 0.3s ease, color 0.2s ease;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(255,94,46,0.08) 0%, transparent 60%),
+                        radial-gradient(circle at 85% 70%, rgba(255,159,67,0.06) 0%, transparent 55%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: radial-gradient(circle, var(--accent), #ffaa55);
+            border-radius: 50%;
+            opacity: 0;
+            filter: blur(0.8px);
+            animation: floatParticle 12s infinite linear;
+            box-shadow: 0 0 6px var(--accent);
+        }
+
+        @keyframes floatParticle {
+            0% {
+                transform: translateY(100vh) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            15% { opacity: 0.8; }
+            85% { opacity: 0.6; }
+            100% {
+                transform: translateY(-100vh) translateX(40px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 2;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            backdrop-filter: blur(16px);
+            background: rgba(10, 10, 20, 0.75);
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="light"] header {
+            background: rgba(248, 250, 252, 0.85);
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.02);
+        }
+
+        .logo-icon {
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, var(--accent), #ffb347);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: var(--glow-sm);
+            transition: var(--transition);
+            animation: flameFlicker 1.8s infinite alternate;
+        }
+
+        @keyframes flameFlicker {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255,94,46,0.4);
+                transform: scale(1);
+            }
+            100% {
+                box-shadow: 0 0 0 6px rgba(255,94,46,0);
+                transform: scale(1.02);
+            }
+        }
+
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), #ffbc6e);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        [data-theme="light"] .logo-text {
+            background: linear-gradient(135deg, #e55c2e, #ff8c42);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 18px;
+            border-radius: 40px;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover::after {
+            width: 70%;
+        }
+
+        .nav-link:hover {
+            color: var(--accent);
+            background: rgba(255, 94, 46, 0.08);
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+        }
+
+        .control-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            font-size: 20px;
+            backdrop-filter: blur(4px);
+        }
+
+        .control-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: var(--glow-sm);
+        }
+
+        .lang-switch {
+            display: flex;
+            gap: 6px;
+            background: var(--bg-card);
+            border-radius: 40px;
+            padding: 5px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(8px);
+        }
+
+        .lang-btn {
+            padding: 6px 16px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 30px;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(120deg, var(--accent), #ff914d);
+            color: white;
+            box-shadow: 0 4px 12px rgba(255,94,46,0.3);
+        }
+
+        .hero {
+            padding: 200px 0 120px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 880px;
+            margin: 0 auto;
+            animation: fadeUp 0.9s ease-out;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(35px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 20px;
+            background: rgba(255, 94, 46, 0.12);
+            border: 1px solid var(--border);
+            border-radius: 60px;
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 32px;
+            backdrop-filter: blur(4px);
+        }
+
+        .hero-badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: ripple 1.8s infinite;
+        }
+
+        @keyframes ripple {
+            0% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 var(--accent);}
+            70% { transform: scale(1.4); opacity: 0.6; box-shadow: 0 0 0 6px rgba(255,94,46,0);}
+            100% { transform: scale(1); opacity: 1;}
+        }
+
+        .hero-title {
+            font-size: 5rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--accent) 80%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1.5px;
+            animation: titleGlow 3s infinite alternate;
+        }
+
+        [data-theme="light"] .hero-title {
+            background: linear-gradient(135deg, #0f172a 0%, #e55c2e 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        @keyframes titleGlow {
+            0% { filter: drop-shadow(0 0 0px rgba(255,94,46,0)); }
+            100% { filter: drop-shadow(0 0 8px rgba(255,94,46,0.3)); }
+        }
+
+        .hero-subtitle {
+            font-size: 1.4rem;
+            color: var(--text-secondary);
+            margin-bottom: 48px;
+            line-height: 1.6;
+            max-width: 720px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 36px;
+            border-radius: 60px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+            backdrop-filter: blur(5px);
+            letter-spacing: 0.3px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(105deg, var(--accent), #ff9f4a);
+            color: white;
+            box-shadow: var(--glow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(255,94,46,0.5);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(8px);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            box-shadow: var(--glow-sm);
+            background: rgba(255,94,46,0.05);
+        }
+
+        .features {
+            padding: 100px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 70px;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 18px;
+            background: linear-gradient(125deg, var(--text-primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--card-border);
+            border-radius: 32px;
+            padding: 36px 28px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), #ffb347, var(--accent));
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
+        }
+
+        .feature-card:hover::before {
+            transform: translateX(0);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-12px) scale(1.01);
+            border-color: var(--accent);
+            box-shadow: var(--glow-lg);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(145deg, var(--accent), #ffa155);
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin-bottom: 28px;
+            transition: transform 0.3s ease;
+            box-shadow: var(--glow-sm);
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: rotate(5deg) scale(1.05);
+        }
+
+        .feature-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+
+        .feature-desc {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .download {
+            padding: 80px 0 120px;
+        }
+
+        .download-box {
+            background: var(--bg-card);
+            border: 1px solid var(--card-border);
+            border-radius: 48px;
+            padding: 70px 40px;
+            text-align: center;
+            max-width: 780px;
+            margin: 0 auto;
+            position: relative;
+            transition: var(--transition);
+            backdrop-filter: blur(16px);
+            overflow: hidden;
+        }
+
+        .download-box::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 30% 20%, rgba(255,94,46,0.2), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .download-box:hover::before {
+            opacity: 1;
+        }
+
+        .download-box:hover {
+            transform: scale(1.01);
+            border-color: var(--accent);
+            box-shadow: var(--glow);
+        }
+
+        .download-title {
+            font-size: 2.6rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .download-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+
+        .download-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        footer {
+            padding: 60px 0 40px;
+            border-top: 1px solid var(--border);
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .footer-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .footer-link:hover {
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.8rem;
+            }
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+            .nav-link {
+                display: none;
+            }
+            .download-box {
+                padding: 40px 24px;
+            }
+            .section-title {
+                font-size: 2.2rem;
+            }
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero {
+                padding: 160px 0 80px;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+
+    <header id="mainHeader">
+        <div class="container">
+            <nav class="nav">
+                <a href="#" class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <span class="logo-text">MurFlame</span>
+                </a>
+                <div class="nav-right">
+                    <!-- Кнопка "На главную" ведёт на ../index.html (главная MurSoftware) -->
+                    <a href="../index.html" class="nav-link" data-i18n="mf.back">На главную</a>
+                    <div class="controls">
+                        <div class="lang-switch">
+                            <button class="lang-btn active" data-lang="ru">RU</button>
+                            <button class="lang-btn" data-lang="en">EN</button>
+                        </div>
+                        <button class="control-btn" id="themeToggle" aria-label="Toggle theme">
+                            <i class="fas fa-moon" id="themeIcon"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <span class="hero-badge-dot"></span>
+                        <span data-i18n="mf.badge">🔥 Лаунчер нового поколения</span>
+                    </div>
+                    <h1 class="hero-title" data-i18n="mf.title">MurFlame Launcher</h1>
+                    <p class="hero-subtitle" data-i18n="mf.subtitle">Молниеносная скорость, полная анонимность и открытый код. Погрузись в Minecraft без границ.</p>
+                    <div class="hero-buttons">
+                        <a href="https://github.com/Barsik-topYT/MurFlameLauncher/releases/download/MurFlame08.06.26/MurFlame_Launcher.exe" class="btn btn-primary" target="_blank">
+                            <i class="fas fa-download"></i>
+                            <span data-i18n="mf.download">Скачать сейчас</span>
+                        </a>
+                        <a href="https://github.com/Barsik-topYT/MurFlameLauncher" class="btn btn-secondary" target="_blank">
+                            <i class="fab fa-github"></i>
+                            <span data-i18n="mf.github">GitHub</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title" data-i18n="mf.features.title">Исключительные преимущества</h2>
+                    <p class="section-subtitle" data-i18n="mf.features.subtitle">Создано для истинных ценителей</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                        <h3 class="feature-title" data-i18n="mf.f1.title">Атомная скорость</h3>
+                        <p class="feature-desc" data-i18n="mf.f1.desc">Запускайся за доли секунды, забудь о долгих загрузках — оптимизация на максимум.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-lock"></i></div>
+                        <h3 class="feature-title" data-i18n="mf.f2.title">Абсолютная приватность</h3>
+                        <p class="feature-desc" data-i18n="mf.f2.desc">Open Source код, никакой телеметрии. Только ты и твой любимый блоковый мир.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-gem"></i></div>
+                        <h3 class="feature-title" data-i18n="mf.f3.title">Эстетика и чистота</h3>
+                        <p class="feature-desc" data-i18n="mf.f3.desc">Никакой рекламы, встроенных трекеров и мусора. Лаунчер, которым приятно пользоваться.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="download">
+            <div class="container">
+                <div class="download-box">
+                    <h2 class="download-title" data-i18n="mf.download.title">Присоединяйся к MurFlame</h2>
+                    <p class="download-subtitle" data-i18n="mf.download.subtitle">Свежая версия уже доступна. Начни своё приключение!</p>
+                    <div class="download-buttons">
+                        <a href="https://github.com/Barsik-topYT/MurFlameLauncher/releases/download/MurFlame08.06.26/MurFlame_Launcher.exe" class="btn btn-primary" target="_blank">
+                            <i class="fas fa-download"></i>
+                            <span data-i18n="mf.download">Windows версия</span>
+                        </a>
+                        <a href="https://github.com/Barsik-topYT/MurFlameLauncher" class="btn btn-secondary" target="_blank">
+                            <i class="fab fa-github"></i>
+                            <span data-i18n="mf.source">Исходный код</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="../index.html" class="footer-link" data-i18n="mf.mainSite">На главную</a>
+                    <a href="https://github.com/Barsik-topYT" class="footer-link" target="_blank">GitHub</a>
+                    <a href="https://t.me/MurSoftware" class="footer-link" target="_blank">Telegram</a>
+                </div>
+                <p class="footer-copyright">© 2026 MurFlame. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ==================== ПЕРЕВОДЫ ====================
+        const translations = {
+            ru: {
+                'mf.back': 'На главную',
+                'mf.badge': '🔥 Лаунчер нового поколения',
+                'mf.title': 'MurFlame Launcher',
+                'mf.subtitle': 'Молниеносная скорость, полная анонимность и открытый код. Погрузись в Minecraft без границ.',
+                'mf.download': 'Скачать сейчас',
+                'mf.github': 'GitHub',
+                'mf.features.title': 'Исключительные преимущества',
+                'mf.features.subtitle': 'Создано для истинных ценителей',
+                'mf.f1.title': 'Атомная скорость',
+                'mf.f1.desc': 'Запускайся за доли секунды, забудь о долгих загрузках — оптимизация на максимум.',
+                'mf.f2.title': 'Абсолютная приватность',
+                'mf.f2.desc': 'Open Source код, никакой телеметрии. Только ты и твой любимый блоковый мир.',
+                'mf.f3.title': 'Эстетика и чистота',
+                'mf.f3.desc': 'Никакой рекламы, встроенных трекеров и мусора. Лаунчер, которым приятно пользоваться.',
+                'mf.download.title': 'Присоединяйся к MurFlame',
+                'mf.download.subtitle': 'Свежая версия уже доступна. Начни своё приключение!',
+                'mf.source': 'Исходный код',
+                'mf.mainSite': 'На главную'
+            },
+            en: {
+                'mf.back': 'Home',
+                'mf.badge': '🔥 Next-gen Launcher',
+                'mf.title': 'MurFlame Launcher',
+                'mf.subtitle': 'Lightning speed, absolute privacy, open source. Dive into Minecraft without limits.',
+                'mf.download': 'Download Now',
+                'mf.github': 'GitHub',
+                'mf.features.title': 'Exceptional Benefits',
+                'mf.features.subtitle': 'Crafted for true enthusiasts',
+                'mf.f1.title': 'Atomic Speed',
+                'mf.f1.desc': 'Launch in a split second, forget long loading times — max optimization.',
+                'mf.f2.title': 'Absolute Privacy',
+                'mf.f2.desc': 'Open source code, zero telemetry. Just you and your beloved blocky world.',
+                'mf.f3.title': 'Clean Aesthetics',
+                'mf.f3.desc': 'No ads, no trackers, no clutter. A launcher you\'ll love to use.',
+                'mf.download.title': 'Join MurFlame',
+                'mf.download.subtitle': 'Latest version available now. Start your adventure!',
+                'mf.source': 'Source Code',
+                'mf.mainSite': 'Home'
+            }
+        };
+
+        let currentLang = localStorage.getItem('mursoft-lang') || 'ru';
+
+        function applyTranslations() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[currentLang] && translations[currentLang][key]) {
+                    el.innerText = translations[currentLang][key];
+                } else if (translations['ru'][key]) {
+                    el.innerText = translations['ru'][key];
+                }
+            });
+        }
+
+        function setLang(lang) {
+            if (translations[lang]) {
+                currentLang = lang;
+                localStorage.setItem('mursoft-lang', lang);
+                applyTranslations();
+                document.querySelectorAll('.lang-btn').forEach(btn => {
+                    if (btn.getAttribute('data-lang') === lang) btn.classList.add('active');
+                    else btn.classList.remove('active');
+                });
+            }
+        }
+
+        // ==================== ТЕМА ====================
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+
+        function updateThemeIcon() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            themeIcon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const newTheme = isDark ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('mursoft-theme', newTheme);
+            updateThemeIcon();
+            applyTranslations();
+        });
+
+        updateThemeIcon();
+
+        // ==================== ЯЗЫК ====================
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const lang = btn.getAttribute('data-lang');
+                setLang(lang);
+            });
+        });
+
+        // ==================== ЧАСТИЦЫ ====================
+        const particlesContainer = document.getElementById('particles');
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            const size = Math.random() * 5 + 2;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDuration = (Math.random() * 12 + 8) + 's';
+            particle.style.animationDelay = Math.random() * 4 + 's';
+            particle.style.background = `radial-gradient(circle, var(--accent), #ffaa66)`;
+            particlesContainer.appendChild(particle);
+            setTimeout(() => particle.remove(), 18000);
+        }
+        for (let i = 0; i < 45; i++) setTimeout(createParticle, i * 150);
+        setInterval(createParticle, 400);
+
+        // ==================== ИНИЦИАЛИЗАЦИЯ ====================
+        applyTranslations();
+
+        // Хедер при скролле
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.style.background = document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(10,10,20,0.9)' : 'rgba(248,250,252,0.92)';
+                header.style.backdropFilter = 'blur(20px)';
+            } else {
+                header.style.background = '';
+            }
+        });
+    </script>
+</body>
+</html>
